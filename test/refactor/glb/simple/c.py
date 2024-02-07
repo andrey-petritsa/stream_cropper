@@ -1,0 +1,1 @@
+global_name = "Andrey Petritsa"

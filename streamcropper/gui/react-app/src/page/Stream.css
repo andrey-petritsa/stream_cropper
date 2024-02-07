@@ -1,0 +1,41 @@
+.streams-container {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+.stream-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: solid;
+    padding: 10px;
+    max-width: 350px;
+    min-width: 350px;
+}
+
+.stream-info__name {
+    text-align: center;
+    word-wrap: break-word;
+}
+
+.stream-info__date {
+    text-align: center;
+}
+
+.stream-info__streamer {
+    text-align: center;
+    font-weight: 700;
+}
+
+.stream {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.stream__video {
+    min-width: 1080px;
+}

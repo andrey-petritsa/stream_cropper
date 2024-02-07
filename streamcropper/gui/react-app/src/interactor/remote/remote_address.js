@@ -1,0 +1,1 @@
+export const remote_address = 'http://80.68.156.108:8000/streamcropper'

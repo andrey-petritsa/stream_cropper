@@ -1,0 +1,1 @@
+from gui.task_registry_presenter import TaskRegistryPresenter
