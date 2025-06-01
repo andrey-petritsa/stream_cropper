@@ -1,7 +1,7 @@
-from interactor.task.task_registry import TaskRegistry
+from interactor.task.task_registry import TaskQueue
 
 
-class SpyTaskRegistry(TaskRegistry):
+class SpyTaskQueue(TaskQueue):
     def __init__(self):
         super().__init__()
         self.last_deleted_task_id = None

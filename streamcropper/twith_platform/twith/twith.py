@@ -4,68 +4,49 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 
 import utils
+from interactor.stream_watcher.stream_reference_extractor import StreamerNameExtractor
 from twith_platform.stream_name_slugger import StreamNameSlugger
 
 
 class Twith:
     def __init__(self, check_online_strategy):
-        self.__platform_name = 'twitch.tv'
-
         self.__check_online_strategy = check_online_strategy
         self.__stream_id_generator = utils.stream_id_generator
         self.__web_client = utils.web_client
         self.__downloaded_streams= []
         self.__name_slugger = StreamNameSlugger()
 
-    def download_stream(self, stream_reference):
-        stream = self.__get_stream(stream_reference)
+    def download_stream(self, stream_link):
+        stream = self.__get_stream(stream_link)
         stream['id'] = self.__stream_id_generator.generate(stream)
 
         self.__downloaded_streams.append(stream)
 
         return stream
 
-    def __get_stream(self, stream_reference):
-        html_page = self.__get_stream_html_page(stream_reference)
-
-        if self.__is_stream_online(stream_reference):
-            stream = self.__get_online_stream(html_page, stream_reference)
-        else:
-            stream = self.__get_offline_stream(stream_reference)
-
-        stream['messages'] = []
-        stream['platform'] = self.__platform_name
+    def __get_stream(self, stream_link):
+        html_page = self.__get_stream_html_page(stream_link)
+        stream = self.__get_stream_meta(stream_link)
+        if stream['is_online']:
+            stream['name'] = self.__get_stream_name(html_page)
 
         return stream
 
-    def __get_stream_html_page(self, stream_reference):
-        url = f"https://www.twitch.tv/{stream_reference}"
-        html_page = self.__web_client.get(url)
+    def __get_stream_html_page(self, stream_link):
+        html_page = self.__web_client.get(stream_link)
         return html_page
 
-    def __is_stream_online(self, stream_reference):
-        return self.__check_online_strategy.check_is_online(self.__platform_name, stream_reference)
+    def __is_stream_online(self, stream_link):
+        return self.__check_online_strategy.check_is_online(stream_link)
 
-    def __get_online_stream(self, html_page, stream_reference):
+    def __get_stream_meta(self, stream_link):
         return {
-            'is_online': True,
-            "streamer": {
-                "name": stream_reference
-            },
-            'name': self.__get_stream_name(html_page),
+            "streamer": {"name": StreamerNameExtractor.get(stream_link)},
             "started_at": datetime.now(),
-            "stream_reference": stream_reference
-        }
-
-    def __get_offline_stream(self, stream_reference):
-        return {
-            "is_online": False,
-            "streamer": {
-                "name": stream_reference
-            },
-            "name": 'stream offline',
-            "started_at": datetime.now(),
-            "stream_reference": stream_reference
+            'link': stream_link,
+            'is_online': self.__is_stream_online(stream_link),
+            'platform' : 'twitch',
+            'name': 'offline'
         }
 
     def __get_stream_name(self, html_page):

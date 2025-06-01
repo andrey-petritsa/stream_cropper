@@ -19,18 +19,18 @@ class TwithStreamFinder():
 
     def _get_stream_references(self):
         return [
-            "lenagol0vach",
-            'welovegames',
-            'orkpod',
-            'vika_karter',
-            'bigrussianmum',
-            'igorghk',
-            'unclebjorn',
-            'kosmeya',
-            'evikey',
-            'faridysha',
-            'juice',
-            'sofiko_sculpts',
-            "dmitry_bale",
-            "dreadztv"
+            'https://twitch.tv/unclebjorn',
+            'https://twitch.tv/igorghk',
+            "https://twitch.tv/lenagol0vach",
+            'https://twitch.tv/welovegames',
+            'https://twitch.tv/orkpod',
+            'https://twitch.tv/vika_karter',
+            'https://twitch.tv/bigrussianmum',
+            'https://twitch.tv/kosmeya',
+            'https://twitch.tv/evikey',
+            'https://twitch.tv/faridysha',
+            'https://twitch.tv/juice',
+            'https://twitch.tv/sofiko_sculpts',
+            "https://twitch.tv/dmitry_bale",
+            "https://twitch.tv/dreadztv"
         ]

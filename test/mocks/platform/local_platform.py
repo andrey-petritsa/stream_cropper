@@ -7,14 +7,14 @@ class LocalPlatform():
         self.last_requested_streamer = None
         self.__last_shredinger_online_status = True
 
-    def download_stream(self, stream_reference):
+    def download_stream(self, stream_link):
         orkpod = {
             "id": "orkpod",
             "name": "orkpod stream",
             "streamer": {
                 "name": "orkpod",
             },
-            "is_online": self.is_stream_online(stream_reference),
+            "is_online": self.is_stream_online(stream_link),
             "stream_reference": 'orkpod',
             "started_at": datetime.datetime.now(),
             "messages": []
@@ -25,7 +25,7 @@ class LocalPlatform():
             "streamer": {
                 "name": "juice",
             },
-            "is_online": self.is_stream_online(stream_reference),
+            "is_online": self.is_stream_online(stream_link),
             "stream_reference": 'juice',
             "started_at": datetime.datetime.now(),
             "messages": []
@@ -54,29 +54,16 @@ class LocalPlatform():
         }
 
 
-        if stream_reference == 'orkpod':
+        if 'orkpod' in stream_link:
             return orkpod
-        if stream_reference == 'juice':
+        if 'juice' in stream_link:
             return juice
-        if stream_reference == 'offline':
+        if 'offline' in stream_link:
             return offline_streamer
-        if stream_reference == 'online':
+        if 'online' in stream_link:
             return online_streamer
-        if stream_reference == 'shredinger':
-            return {
-                "id": "online_streamer",
-                "name": "online",
-                "streamer": {
-                    "name": "juice",
-                },
-                "is_online": self.__last_shredinger_online_status,
-                "stream_reference": 'online_streamer',
-                "started_at": datetime.datetime.now(),
-                "messages": []
-            }
-        self.__last_shredinger_online_status = not self.__last_shredinger_online_status
 
-        raise Exception(f'Streamer {stream_reference} not found')
+        raise Exception(f'Streamer {stream_link} not found')
 
     def download_streams(self, stream_references):
         return [

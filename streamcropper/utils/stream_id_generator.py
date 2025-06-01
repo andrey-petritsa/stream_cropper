@@ -1,7 +1,17 @@
+import re
+
+from unidecode import unidecode
+
+
 class StreamIdGenerator:
     def generate(self, stream):
-        return "-".join(self.__get_hash_parts(stream))
+        valid_stream_name = self.__sanitize_stream_name(stream['name'])
+        return stream['streamer']['name'] + '_' + valid_stream_name
 
-    def __get_hash_parts(self, stream):
-        date_part = stream['started_at'].strftime("%Y-%m-%d.%H-%M-%S")
-        return [stream['streamer']['name'], date_part]
+    def __sanitize_stream_name(self, name):
+        name = unidecode(name)
+        name = name.lower()
+        name = re.sub(r"[’‘ʼ'`′]", '', name)
+        name = re.sub(r'[\\/:"*?<>|! ]+', '_', name)
+        name = re.sub(r'_+', '_', name)
+        return name.strip('_')

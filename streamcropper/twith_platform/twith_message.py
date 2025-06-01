@@ -1,15 +1,16 @@
 from datetime import datetime
 
-from interactor import Message, User
-
 
 class TwithMessage():
     def convert(self, message):
         message_body = message.split(':')[-1]
         message_user_name = message.split('!')[0].replace(":", "")
-        message_user_role = 'anonym'
-        message = Message(datetime.now(), message_body, User(message_user_role, message_user_name))
-        return message
+
+        return {
+            'datetime': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            'text': message_body,
+            'user': {'name': message_user_name, 'role': 'anonym'}
+        }
 
     def is_user_message(self, message):
         return 'PRIVMSG' in message

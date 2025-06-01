@@ -1,8 +1,0 @@
-import interactor.record_stream_task_factory
-import twith_platform.platform_factory
-import file_repository.in_file_gateway_factory
-
-record_stream_task_factory = interactor.record_stream_task_factory.RecordStreamTaskFactory()
-platform_factory = twith_platform.platform_factory.PlatformFactory()
-gateway_factory = file_repository.in_file_gateway_factory.InFileGatewayFactory()
-

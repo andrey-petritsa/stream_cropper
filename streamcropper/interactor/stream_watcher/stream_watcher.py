@@ -1,33 +1,57 @@
-import interactor
-import interactor.factories as factories
-from interactor.task.null_task import NullTask
+import threading
+import time
+
+import utils
+from interactor.stream_watcher.stream_reference_extractor import StreamerNameExtractor
+from twith_platform.platform_factory import PlatformFactory
 
 
 class StreamWatcher:
-    def __init__(self, platform_name, stream_reference):
-        self.platform = interactor.factories.platform_factory.create_platform(platform_name)
-        self.__stream_reference = stream_reference
-        self.__last_started_task = NullTask()
+    def __init__(self, stream_link):
+        self.__stream_link = stream_link
+        self.prev_statuses = []
 
-    def start_or_stop_record_task(self):
-        stream = self.platform.download_stream(self.__stream_reference)
-        if stream["is_online"]:
-            if not self.__is_stream_already_recording():
-                self.__add_task_to_registry()
+        self.stream = None
 
-        if not stream["is_online"]:
-            if self.__is_stream_already_recording():
-                record_stream_task = interactor.task_registry.get_by_id(self.__last_started_task.get_id())
-                record_stream_task.stop()
-                interactor.task_registry.delete_task(self.__last_started_task.get_id())
+    def start_watch(self):
+        thread = self.__create_check_is_online_thread()
+        thread.start()
 
-    def __is_stream_already_recording(self):
-        return interactor.task_registry.is_contain(self.__last_started_task.get_id())
+    def __create_check_is_online_thread(self):
+        self.__platform = PlatformFactory.create_platform(self.__stream_link)
+        self.__stream_reference = StreamerNameExtractor.get(self.__stream_link)
 
-    def __add_task_to_registry(self):
-        task = factories.record_stream_task_factory.create_task('twith', self.__stream_reference)
-        interactor.task_registry.add_task(task, task.get_id())
-        task.start()
-        self.__last_started_task = task
+        thread = threading.Thread(target=self.__check_is_stream_online)
+        return thread
+
+    def __check_is_stream_online(self):
+        while(True):
+            utils.logger.info(f'Check stream status {self.__stream_link}')
+            stream = self.__platform.download_stream(self.__stream_link)
+            self.stream = stream
+            if self.is_online():
+                self.prev_statuses.append('online')
+            if not self.is_online():
+                self.prev_statuses.append('offline')
+            time.sleep(30)
+
+    def is_online(self):
+        if self.stream == None:
+            raise Exception('Stream should not be none')
+
+        return self.stream['is_online']
+
+    def get_prev_statuses(self):
+        return self.prev_statuses
+
+    def get_stream(self):
+        return self.stream
+
+    def is_stream_recorded(self):
+        if 'online' in self.prev_statuses and 'offline' in self.prev_statuses:
+            self.prev_statuses = []
+            return True
+        return False
+
 
 

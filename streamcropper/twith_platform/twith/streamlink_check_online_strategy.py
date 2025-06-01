@@ -3,8 +3,8 @@ import subprocess
 
 
 class StreamlinkCheckOnlineStrategy():
-    def check_is_online(self, platform_name, stream_reference):
-        cmd = f'streamlink --force --json --stream-url {platform_name}/{stream_reference}'
+    def check_is_online(self, stream_link):
+        cmd = f'streamlink --force --json --stream-url {stream_link}'
         process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (stdout, stderr) = process.communicate()
 

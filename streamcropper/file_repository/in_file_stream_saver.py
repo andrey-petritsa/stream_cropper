@@ -12,13 +12,13 @@ class InFileStreamSaver():
         self.__write_stream_to_file(stream)
 
     def __write_stream_to_file(self, stream):
-        path_to_stream_dir = self.__stream_dir.get_stream_dir(stream)
+        path_to_stream_dir = self.__stream_dir.get_stream_dir(stream['id'])
         self.__create_dir_if_not_exists(path_to_stream_dir)
         self.__write_json_stream_to_file(stream)
 
     def __write_json_stream_to_file(self, stream):
         json_stream = self.__json_stream_serializer.convert_to_json(stream)
-        f = open(self.__stream_dir.get_path_to_meta_file(stream), "w")
+        f = open(self.__stream_dir.get_path_to_meta_file(stream['id']), "w")
         f.write(json_stream)
         f.close()
 
